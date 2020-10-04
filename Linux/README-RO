@@ -1,0 +1,35 @@
+(!) Explicațiile din README trebuie coroborate comentariilor ce însoțesc codul,
+pentru a putea înțelege în totalitate implementarea.
+
+1. Organizare
+Proiectul cuprinde, ca structură, fișierul principal (loader.c) și
+fișierele .h asociate, fișierul exec_parser.c, utilizat parsarea executa-
+bilului și crearea structurilor dedicate segmentelor, plus un fișier
+utils.h - cuprinzând de macro-ul DIE, folosit pentru a finaliza o execuție
+inadecvată a programului.
+Fișierul principal cuprinde strict implementarea funcțiilor de bibliotecă.
+Despre eficiența implementării în sine, consider că abordarea curentă
+aduce o performanță acceptabilă, singura zonă în care există o parcurgere
+secvențială a unei structuri liniare de date fiind, pentru handler, în
+cazul identificării segmentului din care face parte o anumită adresă.
+
+2. Implementare
+Pentru marcarea problemelor semnalate la alocarea memoriei, deschiderea
+fișierelor etc., s-a utilizat macro-ul DIE în mod asemănător pentru ambele
+platforme, pentru a nu continua o execuție cu caracter nedefinit. Unde nu
+era necesară ieșirea imediată din program, precum o eroare la dezalocarea
+unei pagini, s-a preferat finalizarea dezalocării celorlalte și menținerea
+erorii prin SAU pe biți cu fiecare valoare returnată de apelul funcției de
+dezalocare, valoare returnată în final de funcție (main, în acest caz).
+Aceasta ar fi unul din aspectele interesant de observat în implementare.
+SAU logic a fost folosit și pe Linux pentru a simplifica obținerea măștii
+de biți pentru pagina ce urmează să fie alocată.
+Zeroizarea zonelor alocate s-a făcut default prin folosirea mmap cu
+MAP_ANONYMOUS sau VirtualAlloc, în funcție de platformă.
+
+3. Cum se compilează și cum se rulează?
+Proiectul cuprinde cele 2 fișiere Makefile, câte unul corespunzător fiecărei
+platforme, cu reguli de build și clean și structuri asemănătoare celei
+din laboratoare.
+Fiind vorba de o bibliotecă, rularea nu se face efectiv, ci prin inter-
+mediul unor programe ce importă funcțiile de bibliotecă.
